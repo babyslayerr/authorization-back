@@ -65,4 +65,23 @@ public class AuthenticationController {
         }
         return returnMap;
     }
+
+    /*
+    로그아웃 api - 세션 비활성화
+     */
+    @GetMapping("/api/logout")
+    public String getLogout(HttpServletRequest request){
+        // servlet request 에서 session을 가져올 때 내용이 없으면 새롭게 생성하지 않기;
+        HttpSession session = request.getSession(false);
+
+        // null이 아니면(session이 있으면)
+        if(session != null){
+            // 세션 비활성화
+            session.invalidate();
+            return "성공적으로 로그아웃되었습니다.";
+        }else{
+            // 세션 만료시
+            return "로그인 정보가 존재하지 않습니다.";
+        }
+    }
 }
