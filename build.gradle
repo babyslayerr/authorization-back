@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+}
+
+group 'org.authorization'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation('org.springframework.boot:spring-boot-starter-web:3.2.0')
+
+    // 수동으로 jar 파일 추가
+    implementation files('lib/h2-2.3.230.jar')
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+test {
+    useJUnitPlatform()
+}
