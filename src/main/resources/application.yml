@@ -5,6 +5,6 @@ spring:
       path: /h2-console # 기본 값
   datasource:
     driver-class-name: org.h2.Driver # 다운받은 라이브러리 파일에 있음
-    url: jdbc:h2:~/test # db url경로 서버에 명시되어있음 MODE=Mysql 추가가능, 메모리기반(휘발성)시 h2:mem 추가
+    url: jdbc:h2:~/testAuth # db url경로 서버에 명시되어있음 MODE=Mysql 추가가능, 메모리기반(휘발성)시 h2:mem 추가
     username: sa # DB username
     password: #DB passowrd
