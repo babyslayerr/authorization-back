@@ -26,17 +26,34 @@ public class MemberRepository {
         }
     }
 
-    public void selectMemberByUserIdAndMember(String userId, String password){
+    public Member selectMemberByUserIdAndMember(String userId, String password){
+        // return값 초기회
+        Member member = null;
         // SQL 구문
-        String sql = "SELECT id, userId, password FROM member";
+        String sql = "SELECT id, user_Id, password FROM member WHERE USER_ID = (?) AND PASSWORD = (?)";
         // DB 연결을 위한 연결 객체, url, username, password 를 파라미터로 사용
         // try 안의 괄호는 AutoableClosed 인터페이스를 구현한 객체로서 괄호안에 작성되게되면 try 구문 종료 후 자동으로 close() 메소드를 호출 한다
-        try (Connection conn = DriverManager.getConnection(jdbcUrl,username,password);
+        try (Connection conn = DriverManager.getConnection(this.jdbcUrl,this.username,this.password);
              PreparedStatement pstmt = conn.prepareStatement(sql)
-        ) {
-        } catch (SQLException e) {
+        ){
+            // 파라미터 세팅
+            pstmt.setString(1,userId);
+            pstmt.setString(2,password);
+            // 실행 후 (단일)값이 있으면 Member에 set
+            ResultSet resultSet = pstmt.executeQuery();
+            if(resultSet.next()){
+                // return 객체 생성
+                member = new Member();
+                // 속성값 기입
+                member.setId(resultSet.getLong("id"));
+                member.setUserId(resultSet.getString("user_id"));
+                member.setPassword(resultSet.getString("password"));
+            }
+        }
+         catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        return member;
     }
 
     public void createMember(String name, String email) {

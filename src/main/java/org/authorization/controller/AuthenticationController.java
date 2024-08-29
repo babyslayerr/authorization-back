@@ -24,8 +24,8 @@ public class AuthenticationController {
     @PostMapping("/api/login") //springboot3.x 이후부터 매개변수 이름 명시
     public String getLogin(@RequestBody Member requestMember, HttpServletRequest request,HttpServletResponse response){ // @RequestBody 어노테이션은 자바 객체와 매핑됨 후에 reflection api 를 통해 필드주입됨, json 매핑에 사용되며, key값에 해당하는 필드가 있어야함
     //TODO DB -> PASSWORD, ID 검증, DTO 생성 필요
-        // Optional<Member> member = memberService.login(userId,password);
-        Optional<Member> member = Optional.of(requestMember);
+        Optional<Member> member = memberService.login(requestMember.getUserId(), requestMember.getPassword());
+        // Optional<Member> member = Optional.of(requestMember);
         // 로그인된 멤버
         Member loginMember = member.orElseThrow();
 
