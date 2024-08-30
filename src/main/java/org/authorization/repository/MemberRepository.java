@@ -3,11 +3,7 @@ package org.authorization.repository;
 import org.authorization.Member;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,13 +58,18 @@ public class MemberRepository {
         return member;
     }
 
-    public void createMember(String name, String email) {
-        String sql = "INSERT INTO MEMBER (name, email) VALUES (?, ?)";
+    /*
+    멤버 생성 - 회원 가입시
+     */
+    public void createMember(String userId, String password) {
+        String sql = "INSERT INTO MEMBER (user_id, password) VALUES (?, ?)";
+        // JDBC 사용을 위한 DB 연결 객체
         try (Connection conn = DriverManager.getConnection(jdbcUrl, username, password);
-             // 미리 컴파일된 SQL 구문을 나타내는 객체
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, name);
-            pstmt.setString(2, email);
+             // 미리 컴파일된 SQL 구문을 나타내는 객체 -> 2번째 파라미터 RETURN_GENERATED_KEYS 은 검색에 의한 생성 키에 대한 지속적인 지시(즉 키를 계속 감시하고 확인하고 생성한단 뜻)
+             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setString(1, userId);
+            pstmt.setString(2, password);
+            // 업데이트 구문 실행 - 변경 된 로우 카운트 리턴
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
