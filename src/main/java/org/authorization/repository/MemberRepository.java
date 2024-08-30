@@ -17,6 +17,9 @@ public class MemberRepository {
     private String username = "sa"; // H2 기본 사용자 이름
     private String password = ""; // H2 기본 비밀번호
 
+    /*
+    생성자 생성시, H2 DB연결 을 위한 드라이버 메모리에 로드
+     */
     public MemberRepository() {
         try {
             // H2 데이터베이스 드라이버를 메모리에 로드
@@ -26,6 +29,9 @@ public class MemberRepository {
         }
     }
 
+    /*
+    * 유저와 비밀번호를 이용해서 멤버(로그인 회원)찾기
+    * */
     public Member selectMemberByUserIdAndMember(String userId, String password){
         // return값 초기회
         Member member = null;
@@ -69,46 +75,9 @@ public class MemberRepository {
         }
     }
 
-    public List<Member> getAllMembers() {
-        List<Member> members = new ArrayList<>();
-        String sql = "SELECT * FROM members";
-        try (Connection conn = DriverManager.getConnection(jdbcUrl, username, password);
-             PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
-            while (rs.next()) {
-                Member member = new Member();
-//                member.setId(rs.getLong("id"));
-//                member.setName(rs.getString("name"));
-//                member.setEmail(rs.getString("email"));
-                members.add(member);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return members;
-    }
 
-    public void updateMember(Long id, String name, String email) {
-        String sql = "UPDATE members SET name = ?, email = ? WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(jdbcUrl, username, password);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, name);
-            pstmt.setString(2, email);
-            pstmt.setLong(3, id);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 
-    public void deleteMember(Long id) {
-        String sql = "DELETE FROM members WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(jdbcUrl, username, password);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setLong(1, id);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+
+
+
 }
