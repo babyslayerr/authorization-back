@@ -84,4 +84,21 @@ public class AuthenticationController {
             return "로그인 정보가 존재하지 않습니다.";
         }
     }
+
+    /*
+    사용자 등록 api - Member Class 등록
+     */
+    @PostMapping("/api/signUpMember")
+    public String postMember(@RequestBody Member member){
+
+        // 생성 후 찾은 멤버
+        Member createdMember = memberService.signUpMember(member.getUserId(), member.getPassword());
+
+        if(createdMember != null){
+            // 에러가 발생하지 않을 시
+            return "성공적으로 회원가입 되었습니다.";
+        }
+        return "회원가입에 실패했습니다. 다시 확인해주세요";
+
+    }
 }

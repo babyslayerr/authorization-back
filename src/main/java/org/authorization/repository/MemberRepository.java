@@ -28,7 +28,7 @@ public class MemberRepository {
     /*
     * 유저와 비밀번호를 이용해서 멤버(로그인 회원)찾기
     * */
-    public Member selectMemberByUserIdAndMember(String userId, String password){
+    public Member findMemberByUserIdAndPassword(String userId, String password){
         // return값 초기회
         Member member = null;
         // SQL 구문
@@ -58,14 +58,42 @@ public class MemberRepository {
         return member;
     }
 
+    public Member findMemberByUserId(String userId){
+        // return 객체
+        Member member = null;
+
+        String sql = "SELECT id, user_id, password FROM MEMBER WHERE user_id = (?)";
+        // h2-db 연결 객체
+        try(Connection conn = DriverManager.getConnection(this.jdbcUrl,this.username,this.password);
+            // 컴파일된 sql 구문 객체
+            PreparedStatement pstmt = conn.prepareStatement(sql)
+        ) {
+            // 파라미터 세팅
+            pstmt.setString(1,userId);
+            // 쿼리 실행 시점
+            ResultSet resultSet = pstmt.executeQuery();
+            // 데이터(로우)가 존재하면
+            if(resultSet.next()){
+                member = new Member();
+                member.setId(resultSet.getLong("id"));
+                member.setUserId(resultSet.getString("user_id"));
+                member.setPassword(resultSet.getString("password"));
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return member;
+    }
+
     /*
     멤버 생성 - 회원 가입시
      */
     public void createMember(String userId, String password) {
         String sql = "INSERT INTO MEMBER (user_id, password) VALUES (?, ?)";
         // JDBC 사용을 위한 DB 연결 객체
-        try (Connection conn = DriverManager.getConnection(jdbcUrl, username, password);
-             // 미리 컴파일된 SQL 구문을 나타내는 객체 -> 2번째 파라미터 RETURN_GENERATED_KEYS 은 검색에 의한 생성 키에 대한 지속적인 지시(즉 키를 계속 감시하고 확인하고 생성한단 뜻)
+        try (Connection conn = DriverManager.getConnection(this.jdbcUrl, this.username, this.password);
+             // 미리 컴파일된 SQL 구문을 나타내는 객체 -> 2번째 파라미터 RETURN_GENERATED_KEYS 은 검색 후 , key 값을 return 받을 수 있다 pstmt.getGeneratedKey 메소드를 통해)
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, userId);
             pstmt.setString(2, password);
